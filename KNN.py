@@ -127,5 +127,4 @@ def predict(k, uId, mId, trained, dict):
                 denominator += abs(trained[uId][x[0] - 2][1]);
         return get_valid_rating(numerator/denominator + muk);
     else:
-        print('no list');
         return get_valid_rating(get_mean(dict[uId]));
