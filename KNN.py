@@ -2,32 +2,57 @@ import converter as cv
 import numpy as np
 from operator import itemgetter
 import math
+import random
 
 
-''''' Given two sorted lists ui and uj, return the common elements of these two lists'''
+''' given two sorted lists ui and uj, return the common elements of these two lists'''
 def get_common(ui, uj):
     common = []
     i = j = 0
     while i < len(ui) and j < len(uj):
-        if ui[i] == uj[j]:
+        if ui[i][0] == uj[j][0]:
             common.append((ui[i][0],ui[i][1], uj[j][1]));
-        if ui[i] <= uj[j]:
+        if ui[i][0] <= uj[j][0]:
             i += 1;
         else:
             j += 1;
     return common;
 
-'''' get the sum of the ratings from a list of tuples where each tuple has form: (uid, rating given by uid).'''
+''' return the sum of the ratings from a list of tuples where each tuple has form: (uid, rating given by uid).'''
 def get_sum(ui):
     sum = 0;
     for x in ui:
         sum += x[1];
     return sum;
 
+''' return the average rating given by user ui'''
 def get_mean(ui):
     return get_sum(ui)/len(ui);
 
-''''calculate the rescaled Pearson Correlation Correlation between user i and user j'''
+
+''' given a floating point number, return the valid rating that is closest to it'''
+def get_valid_rating(x):
+    lower_bound = math.floor(x);
+    upper_bound = math.ceil(x);
+    median = lower_bound + 0.5;
+    min = 1;
+    ret = -1;
+    for y in [lower_bound, upper_bound, median]:
+        if abs(x-y) < min:
+            min = abs(x-y);
+            ret = y;
+        if abs(x-y) == min:
+            if ret != -1:
+                ret = random.choice([ret, y]);
+            else:
+                ret == y;
+    return ret;
+
+
+
+
+
+''' return the rescaled Pearson Correlation Correlation between user i and user j'''
 def get_pearson(i,j, dict):
     numerator = 0.0;
     vi = 0.0;
@@ -75,10 +100,10 @@ def findK(k, left, right, list):
         return findK(k, pivot+1, right, list);
 
 
-'''predict the user uId's rating of movie mId.
-   find k users that are most similar to user uId and has rated this moive
-   If none are found, return the average of the rating given by user uId
-   Otherwise, predict the rating based on the weighted average of the ratings given by those users that are most similar to user uId'''
+''' predict the user uId's rating of movie mId.
+    find k users that are most similar to user uId and has rated this moive
+    If none are found, return the average of the rating given by user uId
+    Otherwise, predict the rating based on the weighted average of the ratings given by those users that are most similar to user uId'''
 def predict(k, uId, mId, trained, dict):
     list = [];
     temp = sorted(trained[uId], key=itemgetter(1), reverse=True);
@@ -100,22 +125,7 @@ def predict(k, uId, mId, trained, dict):
             else:
                 numerator += trained[uId][x[0] - 2][1] * (x[1] - muk);
                 denominator += abs(trained[uId][x[0] - 2][1]);
-
-        return numerator/denominator + muk;
+        return get_valid_rating(numerator/denominator + muk);
     else:
-        return get_mean(uId)
-
-'''
-dict = cv.rating2dict('ml-latest-small/ratings.csv');
-train, test = cv.dict_train_test_split(dict, 1, 10);
-x = [];
-trained = trainKNN(train);
-print(trained[1]);
-print('training completed');
-print(predict(100, 1, 3, trained, train));
-
-
-print(predict(10, 2, 3, trained, train));
-print(predict(10, 10, 3, trained, train));
-print(predict(10, 5, 3, trained, train));
-'''
+        print('no list');
+        return get_valid_rating(get_mean(dict[uId]));
