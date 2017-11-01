@@ -4,7 +4,12 @@ import random
 import math
 from operator import itemgetter
 
-
+class rating:
+    def __init__(self):
+        rating = self.rating;
+        predicated_rating = self.predicated_rating;
+    def __repr__(self):
+        return repr((self.rating, self.predicated_rating));
 
 ''' read ratings from ratings file and store them to dict that use userIDs as keys.'''
 def rating2dict(file):
@@ -46,7 +51,6 @@ def movie2dict(file):
         for row in reader:
             mdict[int(row[0])]= tuple(row[2].split('|'));
     return mdict;
-
 
 
 
