@@ -3,13 +3,8 @@ import csv
 import random
 import math
 from operator import itemgetter
+import copy
 
-class rating:
-    def __init__(self):
-        rating = self.rating;
-        predicated_rating = self.predicated_rating;
-    def __repr__(self):
-        return repr((self.rating, self.predicated_rating));
 
 ''' read ratings from ratings file and store them to dict that use userIDs as keys.'''
 def rating2dict(file):
@@ -28,18 +23,19 @@ def rating2dict(file):
 
 ''' split the dict into trainig and testing. '''
 def dict_train_test_split(dict, i, k):
+    temp = copy.deepcopy(dict);
     train = {};
     test = {};
-    for x in dict.keys():
-        n = len(dict[x]);
+    for x in temp.keys():
+        n = len(temp[x]);
         count = 0;
         index = math.floor(n*(i-1)/k);
         bound = math.floor(n*i/k)-index;
         test[x] = [0]*bound;
         while count < bound:
-            test[x][count] = dict[x].pop(index);
+            test[x][count] = temp[x].pop(index);
             count+=1;
-        train[x] = sorted(dict[x], key=itemgetter(0));
+        train[x] = sorted(temp[x], key=itemgetter(0));
     return train, test;
 
 ''' read movie descriptions from movies file and store them into dict that uses movieIDs as keys. '''
@@ -51,6 +47,7 @@ def movie2dict(file):
         for row in reader:
             mdict[int(row[0])]= tuple(row[2].split('|'));
     return mdict;
+
 
 
 
