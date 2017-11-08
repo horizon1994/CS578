@@ -1,5 +1,13 @@
 Project use python3. 
 
+There are two files for KNN:
+
+1.converter.py
+include functions to read and store the data, split the train and testing data
+
+2.KNN.py
+include main function that will output the RSME, AME, specificity and sensitivity using different value of the K.
+
 There are three files for PRank:
 
 1.prank_data_clean.py
