@@ -221,7 +221,7 @@ def load(filename):
 
 def cross_validate(data, k):
     mae, rsme, spec, sen = 0, 0, 0, 0
-    for i in range(1,2):
+    for i in range(1,6):
         train, test = cv.dict_train_test_split(data, i, 5)
         trained = trainKNN(train)
         prediction = tester(k, train, test, trained)
@@ -234,7 +234,7 @@ def cross_validate(data, k):
     return mae/5, rsme/5, spec/5, sen/5
 
 def parmater_tunning(data):
-    k_range = [x*100 for x in range(5,7)]
+    k_range = [x*100 for x in range(1,7)]
     optimal = 0
     min = 10
     for k in k_range:
