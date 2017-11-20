@@ -120,6 +120,33 @@ def get_spec_sens_prec_accu(y_actual, y_predicted):
     return spec/count, sens/count, prec/count, accu/count
 
 
+def kfoldcv(X, y, k, L_array):
+    opt_L = 0
+    opt_RMSE = float('inf')
+    for L in L_array:
+        n = X.shape[0]
+        ave_RMSE = 0
+        for i in range(1, k+1):
+            T = np.array([])  #T as test set
+            S = np.array([])  #S as train set
+            for j in range(math.floor(n*(i-1)/k), math.floor(n*i/k)):
+                T = np.append(T, [j])
+            for j in range(n):
+                S = np.append(S, [j])
+            S = np.setdiff1d(S, T)
+            T = T.astype(int)
+            S = S.astype(int)
+            #print(S)
+            theta, b = prank(L, 11, X[S, :], y[S, :])
+            mean_of_all = get_mean_of_all(X[S, :]) 
+            y_predicted = predict(X[T, :], 11, theta, b, mean_of_all)
+            ave_RMSE += get_RMSE(y[T, :], y_predicted)/k
+        print('average RMSE of prank with L =', L, ':')
+        print(ave_RMSE)
+        if ave_RMSE < opt_RMSE:
+            opt_RMSE = ave_RMSE
+            opt_L = L
+    return opt_L
 
 
 

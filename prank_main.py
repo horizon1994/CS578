@@ -1,4 +1,4 @@
-from prank_data_clean import generate_matrix
+from data_clean import generate_matrix
 from prank import *
 
 def main():
@@ -8,8 +8,9 @@ def main():
 	# print(y_train)
 	# print(y_test)
 
-	L = 10  #iteration of PRank function
-	print('result for L =', L)
+	L_array = np.array([1, 3])
+	L = kfoldcv(X_train, y_train, 5, L_array)  #iteration of PRank function
+	print('predict using prank with L =', L, ':')
 	k = 11  #number of labels, which is fixed in our project
 	theta, b = prank(L, k, X_train, y_train)
 	print('theta:')
@@ -21,22 +22,16 @@ def main():
 	y_predicted = predict(X_test, k, theta, b, mean_of_all)
 
 	rmse = get_RMSE(y_test, y_predicted)
-	print('rmse:')
-	print(rmse)
+	print('rmse:', rmse)
 	mae = get_MAE(y_test, y_predicted)
-	print('mae:')
-	print(mae)
+	print('mae:', mae)
 
 	#specificity, sensitivity, precision, accuracy
 	spec, sens, prec, accu = get_spec_sens_prec_accu(y_test, y_predicted)
-	print('spec:')
-	print(spec)
-	print('sens:')
-	print(sens)
-	print('prec:')
-	print(prec)
-	print('accu:')
-	print(accu)
+	print('spec:', spec)
+	print('sens:', sens)
+	print('prec:', prec)
+	print('accu:', accu)
 
 main()
 
