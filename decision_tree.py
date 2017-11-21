@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 
 
 def decision_tree(X, y, depth):
-	regr = tree.DecisionTreeRegressor(max_depth = depth)
+	regr = tree.DecisionTreeRegressor(max_depth = depth, random_state = 34)
 	regr.fit(X, y)
 	return regr
 
