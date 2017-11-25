@@ -1,4 +1,4 @@
-import converter as cv
+import data_clean
 from operator import itemgetter
 import math
 import random
@@ -195,7 +195,7 @@ def get_specificity_sensitivity(prediction, test):
 
 
 ''' return the prediction for the test set'''
-def tester(k, train, test, trained):
+def get_prediction(k, train, test, trained):
     output = {}
     for x in test.keys():
         temp = []
@@ -222,11 +222,10 @@ def load(filename):
 def cross_validate(data, k):
     mae, rsme, spec, sen = 0, 0, 0, 0
     for i in range(1,6):
-        train, test = cv.dict_train_test_split(data, i, 5)
+        train, validate = data_clean.dict_train_validate_split(data, i, 5)
         trained = trainKNN(train)
-        prediction = tester(k, train, test, trained)
-        tmae, trsme, tspec, tsen = get_MAE_RSME_spec_sen(prediction, test)
-        #print('%dth iteration with %d neighbor, mae is: %f, rsme is: %f, spec is: %f, sen is: %f'%(i, k, tmae, trsme, tspec, tsen));
+        prediction = get_prediction(k, train, validate, trained)
+        tmae, trsme, tspec, tsen = get_MAE_RSME_spec_sen(prediction, validate)
         mae+=tmae
         rsme+=trsme
         spec+=tspec
@@ -247,25 +246,17 @@ def parmater_tunning(data):
     return optimal
 
 def main():
-    data = cv.rating2dict('ml-latest-small/ratings.csv')
-    k = parmater_tunning(data)
-    print('optimal k is: %d'%k)
-
-
+    train, test =data_clean.build_dict('ml-latest-small/ratings.csv', 0.2)
+    k = parmater_tunning(train)
+    trained = trainKNN(train) # train on the whole training data
+    prediction = get_prediction(k, train, test, trained) # generate predition for the testing data based on the trained model
+    mae, rsme, spec, sen = get_MAE_RSME_spec_sen(prediction, test)
+    print('on testing data, mae = %f, rsme = %f, spec = %f, sen = %f'%(mae, rsme, spec, sen))
 
 if __name__== "__main__":
     main();
 
 
-'''
-dict = cv.rating2dict('ml-latest-small/ratings.csv');
-train, test = cv.dict_train_test_split(dict, 1, 5);
-trained = trainKNN(train);
-store(dict, "dict.obj");
-store(test, "test.obj");
-store(train, "train.obj");
-store(trained, "trained.obj");
-'''
 
 
 

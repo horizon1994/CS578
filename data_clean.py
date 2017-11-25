@@ -2,6 +2,8 @@ import numpy as np
 import csv
 import math
 import pandas as pd
+from operator import itemgetter
+import copy
 from sklearn.model_selection import train_test_split
 
 
@@ -136,6 +138,56 @@ def generate_matrix(file_ratings, file_movies, size):
 	y_test = y.as_matrix()
 
 	return X_train, X_test, y_train, y_test
+
+
+''' split the data into trainning and testing and build two dictionary that store training and testing data respectively'''
+def build_dict(file, size):
+    X_train, X_test, y_train, y_test = prank_data_split(file, size)
+    train = X_train.join(y_train)
+    test = X_test.join(y_test)
+    ratings_train = train.groupby(train['userId'])
+    ratings_test = test.groupby(test['userId'])
+    dict_train, dict_test = {}, {}
+    for name, group in ratings_train:
+        for row in group.itertuples(index=True, name='Pandas'):
+            try:
+                dict_train[name].append((int(getattr(row, "movieId")), float(getattr(row, "rating"))));
+            except KeyError:
+                dict_train[name] = [(int(getattr(row, "movieId")), float(getattr(row, "rating")))];
+    for name, group in ratings_test:
+        for row in group.itertuples(index=True, name='Pandas'):
+            try:
+                dict_test[name].append((int(getattr(row, "movieId")), float(getattr(row, "rating"))));
+            except KeyError:
+                dict_test[name] = [(int(getattr(row, "movieId")), float(getattr(row, "rating")))];
+    return dict_train, dict_test
+
+''' split the dict into trainig and validation. '''
+def dict_train_validate_split(dict, i, k):
+    temp = copy.deepcopy(dict);
+    train = {};
+    test = {};
+    for x in temp.keys():
+        n = len(temp[x]);
+        count = 0;
+        index = math.floor(n*(i-1)/k);
+        bound = math.floor(n*i/k)-index;
+        test[x] = [0]*bound;
+        while count < bound:
+            test[x][count] = temp[x].pop(index);
+            count+=1;
+        train[x] = sorted(temp[x], key=itemgetter(0));
+    return train, test;
+
+''' read movie descriptions from movies file and store them into dict that uses movieIDs as keys. '''
+def movie2dict(file):
+    mdict = {};
+    with open(file, 'r') as f:
+        reader = csv.reader(f);
+        next(reader);
+        for row in reader:
+            mdict[int(row[0])]= tuple(row[2].split('|'));
+    return mdict;
 
 
 
