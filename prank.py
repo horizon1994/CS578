@@ -1,4 +1,6 @@
+from data_clean import generate_matrix
 import numpy as np
+import pandas as pd
 import csv
 #import random
 import math
@@ -120,7 +122,7 @@ def get_spec_sens_prec_accu(y_actual, y_predicted):
     return spec/count, sens/count, prec/count, accu/count
 
 
-def kfoldcv(X, y, k, L_array):
+def kfoldcv(X, y, k, L_array, file_movies):
     opt_L = 0
     opt_RMSE = float('inf')
     for L in L_array:
@@ -137,10 +139,17 @@ def kfoldcv(X, y, k, L_array):
             T = T.astype(int)
             S = S.astype(int)
             #print(S)
-            theta, b = prank(L, 11, X[S, :], y[S, :])
-            mean_of_all = get_mean_of_all(X[S, :]) 
-            y_predicted = predict(X[T, :], 11, theta, b, mean_of_all)
-            ave_RMSE += get_RMSE(y[T, :], y_predicted)/k
+
+            X_train = pd.DataFrame(X[S, :])
+            y_train = pd.DataFrame(y[S])
+            X_vali = pd.DataFrame(X[T, :])
+            y_vali = pd.DataFrame(y[T])
+            X_train, X_vali, y_train, y_vali = generate_matrix(X_train, X_vali, y_train, y_vali, file_movies)
+
+            theta, b = prank(L, 11, X_train, y_train)
+            mean_of_all = get_mean_of_all(X_train) 
+            y_predicted = predict(X_vali, 11, theta, b, mean_of_all)
+            ave_RMSE += get_RMSE(y_vali, y_predicted)/k
         print('average RMSE of prank with L =', L, ':')
         print(ave_RMSE)
         if ave_RMSE < opt_RMSE:

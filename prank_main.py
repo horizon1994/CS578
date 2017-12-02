@@ -1,16 +1,16 @@
-from data_clean import generate_matrix
+from data_clean import *
 from prank import *
 
 def main():
-	X_train, X_test, y_train, y_test = generate_matrix('./ml-latest-small/ratings.csv', './ml-latest-small/movies.csv', 0.2)
-	# print(X_train)
-	# print(X_test)
-	# print(y_train)
-	# print(y_test)
+	X_train, X_test, y_train, y_test = prank_data_split('./ml-latest-small/ratings.csv', 0.2)
 
+	#cross validation#
 	L_array = np.array([1, 3])
-	L = kfoldcv(X_train, y_train, 5, L_array)  #iteration of PRank function
+	L = kfoldcv(X_train.as_matrix(), y_train.as_matrix(), 5, L_array, './ml-latest-small/movies.csv') 
+	
+	#prediction#
 	print('predict using prank with L =', L, ':')
+	X_train, X_test, y_train, y_test = generate_matrix(X_train, X_test, y_train, y_test, './ml-latest-small/movies.csv')
 	k = 11  #number of labels, which is fixed in our project
 	theta, b = prank(L, k, X_train, y_train)
 	print('theta:')

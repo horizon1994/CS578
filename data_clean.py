@@ -118,10 +118,12 @@ def test_data_clean(X_test, final, user_genres, movie_genres):
 	return test_genres
 
 
-def generate_matrix(file_ratings, file_movies, size):
-	X_train, X_test, y_train, y_test = prank_data_split(file_ratings, size)
+def generate_matrix(X_train, X_test, y_train, y_test, file_movies):
+	#X_train, X_test, y_train, y_test = prank_data_split(file_ratings, size)
 
 	'''clean training data'''
+	X_train.columns = ['userId', 'movieId']
+	y_train.columns = ['rating']
 	final, user_genres, movie_genres = train_data_clean(X_train, y_train, file_movies)
 	X = final.ix[:,6:]
 	X = X.drop('number_genres', axis = 1)
@@ -130,6 +132,8 @@ def generate_matrix(file_ratings, file_movies, size):
 	y_train = y.as_matrix()
 
 	'''clean test data'''
+	X_test.columns = ['userId', 'movieId']
+	y_test.columns = ['rating']
 	test_genres = test_data_clean(X_test.join(y_test), final, user_genres, movie_genres)
 	X = test_genres.ix[:,6:]
 	X = X.drop('number_genres', axis = 1)
