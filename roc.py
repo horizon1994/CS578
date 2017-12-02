@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 
 def plot(sp, sen):
     plt.title('ROC')
+    for i in range(len(sp)):
+        sen[i].extend((0,1))
+        sp[i].extend((0,1))
+        sen[i], sp[i] = zip(*sorted(zip(sen[i], sp[i])))
     KNN, = plt.plot(sp[0], sen[0], 'b', label='KNN')
     Prank, = plt.plot(sp[1], sen[1], 'r', label='Prank')
     Tree, = plt.plot(sp[2], sen[2], 'g', label='Decision Tree')
@@ -16,3 +20,4 @@ def plot(sp, sen):
     plt.ylabel('Sensitivity')
     plt.xlabel('Specificity')
     plt.show()
+
