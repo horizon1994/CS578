@@ -3,6 +3,7 @@ import KNN
 from data_clean import *
 import prank
 import decision_tree
+'''
 def get_list():
     train, test = build_dict('../dataset/ratings.csv', 0.2)
     X_train, X_test, y_train, y_test = prank_data_split('../dataset/ratings.csv', 0.2)
@@ -31,6 +32,7 @@ def get_list():
         sp[2].append(spec)
         sen[2].append(sens)
     return sp, sen
+    '''
 
 def plot(sp, sen):
     plt.title('ROC')
@@ -49,5 +51,10 @@ def plot(sp, sen):
     plt.xlabel('1-Specificity')
     plt.show()
 
-sp, sen = get_list()
-plot(sp,sen)
+sp_knn = [0.914715,0.915061,0.915044,0.915005,0.914611,0.913886]
+sen_knn = [0.216077,0.218079,0.218346,0.218432,0.216744,0.212653]
+sp_prank = [0.909254,0.908832,0.909238,0.911202,0.913902,0.912513]
+sen_prank = [0.198710,0.198757,0.206928,0.215047,0.226520,0.220575]
+sp_tree = [0.913977,0.913702,0.914700,0.917030,0.918300,0.917735,0.917499,0.917469,0.917676,0.917667,0.917810]
+sen_tree = [0.197038,0.218240,0.233431,0.225568,0.243366,0.239331,0.240045,0.242531,0.243016,0.242281,0.246050]
+plot([sp_knn, sp_prank, sp_tree],[sen_knn, sen_prank, sen_tree])
