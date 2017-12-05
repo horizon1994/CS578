@@ -6,6 +6,7 @@ import decision_tree
 def get_list():
     train, test = build_dict('ml-latest-small/ratings.csv', 0.2)
     X_train, X_test, y_train, y_test = prank_data_split('./ml-latest-small/ratings.csv', 0.2)
+    X_train, X_test, y_train, y_test = generate_matrix(X_train, X_test, y_train, y_test, './ml-latest-small/movies.csv')
     sp = [[],[],[]]
     sen = [[],[],[]]
     for k in [2, 20, 40, 80, 160, 320]:
@@ -15,7 +16,7 @@ def get_list():
         sp[0].append(spect)
         sen[0].append(sent)
     for L in [1,5,10,50,100,200]:
-        X_train, X_test, y_train, y_test = generate_matrix(X_train, X_test, y_train, y_test, './ml-latest-small/movies.csv')
+        print(L)
         k = 11  # number of labels, which is fixed in our project
         theta, b = prank.prank(L, k, X_train, y_train)
         mean_of_all = prank.get_mean_of_all(X_train)  # get mean rating for all movies, may be used in prediction
@@ -24,8 +25,6 @@ def get_list():
         sp[1].append(spec)
         sen[1].append(sens)
     for depth in range(1,12):
-        X_train, X_test, y_train, y_test = generate_matrix(X_train, X_test, y_train, y_test,
-                                                           './ml-latest-small/movies.csv')
         regr = decision_tree.decision_tree(X_train, y_train, depth)
         y_predicted = decision_tree.predict(regr, X_test)
         # specificity, sensitivity, precision, accuracy
