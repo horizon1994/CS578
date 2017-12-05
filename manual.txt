@@ -1,5 +1,34 @@
-External library used: 
-scikit-learn (0.19.1),
-pandas (0.20.3),
-numpy (1.13.3),
-matplotlib (2.1.0)
+Project uses python3.
+
+External library used:
+scikit-learn(0.19.1), pandas(0.20.3), numpy(1.33.3), matplotlib(2.1.0).
+
+To run our algorithms, just run these scripts in command line:
+python prank_main.py
+python decision_tree_main.py
+python KNN.py
+
+All of them take a long time to run, due to 5-fold cross validation. prank_main file needs longer time due to large iteration(L). To see a working and faster output, one can set L_array = np.array([1]) in prank_main.py, set depth_array = np.array([2]) in decision_tree_main.py and comment out k=parameter_tuning(train) and set k =500 of main() in KNN.py. 
+To further reduce the running time of prank_main.py, comment out L_array = np.array([1]) and L = kfoldcv(X_train.as_matrix(), y_train.as_matrix(), 5, L_array, '../dataset/movies.csv') and set L = 200. 
+To further reduce the running time of decision_tree_main.py, comment out depth_array = np.array([2]) and depth = kfoldcv(X_train.as_matrix(), y_train.as_matrix(), 5, depth_array, '../dataset/movies.csv') and set depth = 2.
+
+Files:
+1.data_clean.py
+Include functions to read the data, split the train and testing data, generate features for Prank and Decision Tree algorithm.
+
+2.KNN.py
+Include function to do cross validation using different value of the K.
+Include functions for training and prediction using KNN and functions that will output the RMSE, MAE, specificity and sensitivity.
+
+3.prank.py and prank_main.py
+Include prank function to do cross validation with different iteration L, train data and get theta and b, do prediction in test set. 
+Include functions to compute MAE, RMSE, specificity, sensitivity, precision, accuracy.
+(we compute precision and accuracy, but they are not included in our report)
+
+4.decision_tree.py and decision_tree_main.py
+Include functions for cross validation with different max depth, training and prediction using decision tree regressor library. 
+Include functions to compute MAE, RMSE, specificity, sensitivity, precision, accuracy.
+(we compute precision and accuracy, but they are not included in our report)
+
+5. plot.py and roc.py
+Include functions to plot roc curve and rmse vs proportion of original training set with given input data. 

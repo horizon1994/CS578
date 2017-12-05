@@ -5,7 +5,7 @@ def main():
 	X_train, X_test, y_train, y_test = prank_data_split('../dataset/ratings.csv', 0.2)
 
 	#cross validation#
-	L_array = np.array([1, 3])
+	L_array = np.array([1, 5, 10, 50, 100, 200])
 	L = kfoldcv(X_train.as_matrix(), y_train.as_matrix(), 5, L_array, '../dataset/movies.csv')
 	
 	#prediction#
